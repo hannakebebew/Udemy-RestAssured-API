@@ -12,6 +12,8 @@ import org.testng.annotations.Test;
 
 import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
+import io.restassured.path.json.JsonPath;
+import io.restassured.response.Response;
 
 public class MapRestAPi {
 	/*archtecture of restApi is
@@ -38,13 +40,18 @@ public class MapRestAPi {
 		
 		RestAssured.baseURI = prop.getProperty("HOST");
 		
-		RestAssured.given().
+		Response res= RestAssured.given().
 					param("id", "524901").
 					param("lang", "zh_cn").
 					param("appid", "b1b15e88fa797225412429c1c50c122a1").
 		   when().get("/data/2.5/forecast/daily").
 		   then().assertThat().statusCode(200).contentType(ContentType.JSON).
-		   and().body("city.country", equalTo("RU")).header("server", "openresty/1.9.7.1");
+		   and().body("city.country", equalTo("RU")).header("server", "openresty/1.9.7.1").extract().response();
+		
+		String resp = res.toString();
+		JsonPath js= new JsonPath (resp);
+		
+		System.out.println("Output is "+ resp);
 	}
 
 }
